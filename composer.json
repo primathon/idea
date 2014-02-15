@@ -1,0 +1,21 @@
+{
+    "name": "primathon/idea",
+    "description": "Rapid Iterative Idea Deployment",
+	"license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "Primathon",
+            "email": "primathon@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.0.x"
+    },
+    "autoload": {
+        "psr-0": {
+            "Primathon\\Idea": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}

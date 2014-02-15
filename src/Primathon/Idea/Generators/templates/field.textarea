@@ -1,0 +1,10 @@
+{{-- {{fieldName}} / {{fieldType}} --}}
+<div class="form-group">
+	{{ Form::label('{{fieldName}}', Lang::get('{{langKey}}'), array('class' => 'col-sm-3 control-label')) }}
+	<div class="col-sm-6">
+		<div class="input-group">
+			{{ Form::textarea('{{fieldName}}', null, array('class' => 'form-control', 'id' => '{{fieldName}}', 'placeholder' => '{{placeholder}}')) }}
+		</div>
+	</div>
+</div>
+

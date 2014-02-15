@@ -1,0 +1,12 @@
+{{-- {{fieldName}} / {{fieldType}} --}}
+<div class="form-group">
+	{{ Form::label('{{fieldName}}', Lang::get('{{langKey}}'), array('class' => 'col-sm-3 control-label')) }}
+	<div class="col-sm-6">
+		<div class="input-group datetime">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			{{ Form::text('{{fieldName}}', null, array('class' => 'form-control', 'id' => '{{fieldName}}', 'placeholder' => '{{placeholder}}')) }}
+			<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+		</div>
+	</div>
+</div>
+

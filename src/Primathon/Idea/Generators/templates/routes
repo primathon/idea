@@ -1,0 +1,7 @@
+Route::get(   '{{requestPath}}/idea',           array('as' => '{{routesPath}}.index',   'uses' => '{{controller}}@index'  ));
+Route::get(   '{{requestPath}}/idea/create',    array('as' => '{{routesPath}}.create',  'uses' => '{{controller}}@create' ));
+Route::post(  '{{requestPath}}/idea',           array('as' => '{{routesPath}}.store',   'uses' => '{{controller}}@store'  ));
+Route::get(   '{{requestPath}}/idea/{{{primaryKey}}}',      array('as' => '{{routesPath}}.show',    'uses' => '{{controller}}@show'   ));
+Route::get(   '{{requestPath}}/idea/{{{primaryKey}}}/edit', array('as' => '{{routesPath}}.edit',    'uses' => '{{controller}}@edit'   ));
+Route::patch( '{{requestPath}}/idea/{{{primaryKey}}}',      array('as' => '{{routesPath}}.update',  'uses' => '{{controller}}@update' ));
+Route::delete('{{requestPath}}/idea/{{{primaryKey}}}',      array('as' => '{{routesPath}}.destroy', 'uses' => '{{controller}}@destroy'));

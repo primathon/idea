@@ -1,0 +1,21 @@
+@extends('layouts.scaffold')
+
+@section('main')
+
+<h1>{{title}}</h1>
+
+{{ Form::open(array('route' => '{{routePath}}', 'class' => 'form-horizontal', 'role' => 'form')) }}
+
+	{{fields}}
+
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			{{ Form::submit('Save Entry', array('class' => 'btn btn-info')) }}
+		</div>
+	</div>
+
+{{ Form::close() }}
+
+@stop
+
+{{-- end {{fileName}} --}}

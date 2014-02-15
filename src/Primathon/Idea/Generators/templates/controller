@@ -1,0 +1,135 @@
+<?php
+
+class {{className}} extends BaseController {
+
+	/**
+	 * {{Model}} Repository
+	 *
+	 * @var {{Model}}
+	 */
+	protected ${{model}};
+
+	public function __construct({{Model}} ${{model}})
+	{
+		$this->{{model}} = ${{model}};
+	}
+
+	/**
+	 * Display a listing of {{Models}}
+	 *
+	 * @return Response
+	 */
+	public function index()
+	{
+		${{models}} = $this->{{model}}->all();
+		$data = array(
+			'{{models}}' => ${{models}},
+		);
+		return View::make('{{viewsPath}}.index', $data);
+	}
+
+	/**
+	 * Show the form for creating a new {{Model}}
+	 *
+	 * @return Response
+	 */
+	public function create()
+	{
+		return View::make('{{viewsPath}}.create');
+	}
+
+	/**
+	 * Store a newly created {{Model}} in storage
+	 *
+	 * @return Response
+	 */
+	public function store()
+	{
+		$input = Input::all();
+		$validation = Validator::make($input, {{Model}}::$rules);
+
+		if ($validation->passes())
+		{
+			$this->{{model}}->create($input);
+			return Redirect::route('{{routesPath}}.index');
+		}
+
+		return Redirect::route('{{routesPath}}.create')
+			->withInput()
+			->withErrors($validation)
+			->with('message', 'There were validation errors.');
+	}
+
+	/**
+	 * Display a single {{Model}}
+	 *
+	 * @param  int  {{primaryKey}}
+	 * @return Response
+	 */
+	public function show(${{primaryKey}})
+	{
+		${{model}} = $this->{{model}}->findOrFail(${{primaryKey}});
+		$data = array(
+			'{{models}}' => ${{models}},
+		);
+		return View::make('{{viewsPath}}.show', $data);
+	}
+
+	/**
+	 * Show the form for editing the specified {{Model}}
+	 *
+	 * @param  int  {{primaryKey}}
+	 * @return Response
+	 */
+	public function edit(${{primaryKey}})
+	{
+		${{model}} = $this->{{model}}->find(${{primaryKey}});
+		if (is_null(${{model}}))
+		{
+			return Redirect::route('{{routesPath}}.index');
+		}
+		$data = array(
+			'{{models}}' => ${{models}},
+		);
+		return View::make('{{viewsPath}}.edit', $data);
+	}
+
+	/**
+	 * Update the specified {{Model}} in storage
+	 *
+	 * @param  int  {{primaryKey}}
+	 * @return Response
+	 */
+	public function update(${{primaryKey}})
+	{
+		$input = array_except(Input::all(), '_method');
+		$validation = Validator::make($input, {{Model}}::$rules);
+
+		if ($validation->passes())
+		{
+			${{model}} = $this->{{model}}->find(${{primaryKey}});
+			${{model}}->update($input);
+			return Redirect::route('{{routesPath}}.show', {{primaryKey}});
+		}
+
+		return Redirect::route('{{routesPath}}.edit', {{primaryKey}})
+			->withInput()
+			->withErrors($validation)
+			->with('message', 'There were validation errors.');
+	}
+
+	/**
+	 * Remove the specified {{Model}} from storage
+	 *
+	 * @param  int  {{primaryKey}}
+	 * @return Response
+	 */
+	public function destroy(${{primaryKey}})
+	{
+		$this->{{model}}->find(${{primaryKey}})->delete();
+		return Redirect::route('{{routesPath}}.index');
+	}
+
+}
+
+// end {{appPath}}

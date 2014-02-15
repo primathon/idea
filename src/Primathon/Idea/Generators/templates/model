@@ -1,0 +1,16 @@
+<?php
+
+class {{modelName}} extends Eloquent
+{
+	protected $table      = '{{tableName}}';
+	protected $primaryKey = '{{primaryKey}}';
+	public $timestamps    = {{timestamps}};
+	public $softDeletes   = {{softDeletes}};
+
+	protected $guarded  = array({{guarded}});
+	protected $fillable = array({{fillable}});
+
+	public static $rules = array({{rules}});
+}
+
+// end {{appPath}}
