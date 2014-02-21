@@ -20,11 +20,28 @@ And when I changed something?
 
 I found a few tools that helped me quite a bit with these steps:
 
-- [Laravel 4 Generators by Jeffrey Way](https://github.com/JeffreyWay/Laravel-4-Generators) - Jeffrey Way's fantastic Generators package for Laravel 4
+- [Laravel 4 Generators](https://github.com/JeffreyWay/Laravel-4-Generators) - Jeffrey Way's fantastic Generators package for Laravel 4
 - [Larry Four Generators](https://github.com/XCMer/larry-four-generator) - An alternate Generator package that references an external data file
 - [Ardent for Laravel 4](https://github.com/laravelbook/ardent) - Self-validating smart models for Laravel 4's Eloquent ORM
 
 Credit to their respective authors; these packages have helped me **immmensely** over the last few months. Also, I have -ahem- "liberated" quite a few ideas and code blocks from each package.
+
+
+### This is not an everything machine
+
+I would like to specifically point out that this is not a 'one-size-fits-all' approach to building web applications. This is simply a way to get from idea to working prototype in the shortest amount of time.
+Given that this (intentionally) does not handle advanced data concepts like pivot tables and polymorphic relations, you should be using this to bang out a concept and modify the output to suit your needs.
+
+
+## Installation
+
+Eventually, I will put this on <a href="https://packagist.org/packages/primathon/idea">Packagist</a>, but that time is not yet here.
+
+You'll probably follow these steps:
+
+- Put the following in your composer.json: `"primathon/idea": "1.*"`
+- Run `composer update`
+- Add `'Primathon\Idea\IdeaServiceProvider'` to the `providers` array of `app/config/app.php`
 
 
 ## Example Idea File
@@ -41,17 +58,6 @@ Credit to their respective authors; these packages have helped me **immmensely**
 		active boolean; default 0
 
 
-## Installation
-
-Eventually, I will put this on <a href="https://packagist.org/packages/primathon/idea">Packagist</a>, but that time is not yet here.
-
-You'll probably follow these steps:
-
-- Put the following in your composer.json: `"primathon/idea": "1.*"`
-- Run `composer update`
-- Add `'Primathon\Idea\IdeaServiceProvider'` to the `providers` array of `app/config/app.php`
-
-
 ## Usage
 
 Once the package has been installed, you can access the commands via `artisan`, available under the `idea` namespace.
@@ -62,9 +68,9 @@ The package supports the following commands:
 - `php artisan idea:lang <idea_file>`
 - `php artisan idea:migration <idea_file>`
 - `php artisan idea:model <idea_file>`
-- `php artisan idea:routes <idea_file>`
-- `php artisan idea:seed <idea_file>`
-- `php artisan idea:views <idea_file>`
+- `php artisan idea:routes <idea_file>` // not yet complete
+- `php artisan idea:seed <idea_file>` // not yet complete
+- `php artisan idea:views <idea_file>` // not yet complete
 
 As you may have figured out, `<idea_file>` is a required input for each command. You have to provide a filename that exists at the root of your Laravel 4 installation, where `artisan` itself resides.
 
@@ -74,8 +80,11 @@ You cannot provide absolute paths for the Idea file yet. If you're providing a r
 ### Idea file Syntax
 
 Your model definition **must** have no whitespace in front of it. This is not optional.
+
 Your field definitions **must** have a tab or spaces in front of each one. This is not optional.
+
 Most everything is semicolon-delimited. The final semicolon is optional.
+
 Blank lines and comments (beginning with `//`) will be ignored.
 
 
@@ -111,7 +120,8 @@ After you define a model, you need to define fields for it. The field definition
 - `label` - The label associated with this field, referenced in the Lang file (optional) and used in the View forms.
 - `placeholder` - The placeholder value for the field (optional). Only applies to text input (strings, integers, etc).
 - `rules` - Pipe-separated validation rules to apply to this field (optional), used when saving data to the database. Leverages the Ardent Model validation.
-- `modifiers` - Field modifiers such as `unsigned` and `nullable` (optional).
+- `nullable` - Indicates that the field should allow NULL values (optional)
+- `unsigned` - Indicates an unsigned numeric type; only integer, bigInteger, smallInteger, tinyInteger are supported (optional)
 
 If it makes you feel better, you can add `timestamps` and `softDeletes` as field definitions instead of in the Model. I may change this at some point.
 
@@ -123,7 +133,9 @@ If it makes you feel better, you can add `timestamps` and `softDeletes` as field
     integer
     bigInteger
     smallInteger
+	tinyInteger
     float
+	double
     decimal
     boolean
     date
@@ -131,6 +143,8 @@ If it makes you feel better, you can add `timestamps` and `softDeletes` as field
     time
     timestamp (not timestamp**s**)
     text
+	longText
+	mediumText
     binary
     enum
 
@@ -140,22 +154,13 @@ The `enum` field type utilizes a comma-separated list of values. These can optio
     type enum admin, moderator, user, unregistered
 
 
-#### Field Modifiers ####
+### Assumptions ###
 
-    nullable
-    unsigned
-    primary
-    fulltext
-    unique
-    index
-
-
-### Default Assumptions ###
-
-- Technically, the `increments` field is optional, but I always include it for the sake of completeness. If you like, you can define an auto-incrementing field other than `id`.
-- Adding `timestamps` in your Model definition will include the `created_at` and `updated_at` columns in your table.
+- Adding `timestamps` in your Model definition will include the `created_at` and `updated_at` columns in your table. Unlike Laravel, this is `false` by default.
 - The `softDeletes` value is false by default. Adding it to your Model definition will include it in your generated Migrations.
-- In your Model definition, the `routesPath` and `viewsPath` options will default to the `table_name` value.
+- In your Model definition, the `route` and `views` options will default to the `table_name` value.
+- Laravel creates all fieldtypes as non-nullable (at least using MySQL) unless otherwise noted;
+- Indexes will only be assigned on the primary 'increments' key; all other indexes (either unique or basic) are not supported. Add them in yourself.
 
 
 ## Templates ##

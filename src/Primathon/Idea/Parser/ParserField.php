@@ -38,19 +38,19 @@ class ParserField {
 	 * Field default value (optional)
 	 * @var mixed
 	 */
-	var $default  = false;
+	var $default = false;
 
 	/**
 	 * Field label for Lang file output (optional)
 	 * @var string
 	 */
-	var $label    = false;
+	var $label = false;
 
 	/**
 	 * Field validation rules, pipe-separated (optional)
 	 * @var string
 	 */
-	var $rules    = false;
+	var $rules = false;
 
 	/**
 	 * Field placeholder for Form elements (optional)
@@ -59,6 +59,4 @@ class ParserField {
 	var $placeholder = false;
 
 }
-
-// end Primathon/Idea/Field.php
 

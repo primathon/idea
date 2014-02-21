@@ -31,10 +31,10 @@ class ParserModel {
     public $softDeletes = false;
 
     /**
-     * The primary key column name that is an integer auto increment. Default 'id'
+     * The primary key column name that is an integer auto increment.
      * @var string
      */
-    public $primaryKey = 'id';
+    public $primaryKey = '';
 
     /**
      * The path that will be used in the Controller when redirecing to various routes
@@ -47,7 +47,7 @@ class ParserModel {
 	 * Also, the path where view files will be stored upon generation
      * @var string
      */
-	public $viewsPath  = '';
+	public $viewsPath = '';
 
     /**
 	 * Indicates if the IDs are auto-incrementing
@@ -63,4 +63,3 @@ class ParserModel {
 
 }
 
-// end Primathon/Idea/Model.php

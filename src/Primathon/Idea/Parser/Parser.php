@@ -9,31 +9,43 @@ use Illuminate\Filesystem as File;
 
 class Parser {
 
+	/**
+	 * Single Model instance
+	 *
+	 * @var Primathon\Idea\Parser\ParserModel
+	 */
 	public $model;
+
+	/**
+	 * Keep track of current line in Idea file
+	 *
+	 * @var integer
+	 */
 	public $currentLine = 0;
 
-	protected $modelParser;
-	protected $fieldParser;
 
 	/**
 	 * Parser constructor
 	 *
 	 * defines $this->model as Idea\Model instance
 	 */
-	public function __construct(
-//		\Primathon\Idea\Parser\FieldParser $fieldParser,
-//		\Primathon\Idea\Parser\ModelParser $modelParser
-	)
+	public function __construct()
 	{
-//		$this->fieldParser = $fieldParser;
-//		$this->modelParser = $modelParser;
-//		$this->modelParser = new Parser\ModelParser;
-//		$this->fieldParser = new Parser\FieldParser;
-		$this->model       = new ParserModel;
+		$this->model = new ParserModel;
 	}
 
+	/**
+	 * Primary Idea file parsing function
+	 *
+	 * @var string filepath
+	 */
 	public function parse($file)
 	{
+		// Check for file existence and load into var
+		if ( ! \File::exists($file))
+		{
+			throw new ParseError("No file found at {$file}");
+		}
 		$file = \File::get($file);
 
 		// Track the current line for showing errors
@@ -57,8 +69,6 @@ class Parser {
 
 			$this->parseLine($line);
 		}
-
-		// TODO: quick check to make sure you only have one Model defined in this file
 
 		// Give me my instance back
 		return $this->model;
@@ -111,7 +121,7 @@ class Parser {
 		$metaData = explode(' ', $modelData[0]);
 		if (count($metaData) < 2)
 		{
-			throw new ParseError("[Line $this->currentLine] Model does not include a name and table");
+			throw new ParseError("Model does not include a name and table");
 		}
 		$this->model->modelName = $metaData[0];
 		$this->model->tableName = $metaData[1];
@@ -121,6 +131,8 @@ class Parser {
 		// >> timestamps | softDeletes | route "routes.path" | views "views/path"
 		foreach ($modelData as $i => $segment)
 		{
+			$segment = trim($segment);
+
 			// Handle model metadata for timestamps and softDeletes
 			if ($segment == 'timestamps')
 			{
@@ -132,6 +144,15 @@ class Parser {
 			}
 			else 
 			{
+				// We add spaces to these elements so that 'routes' breaks the 0-5 substring matching
+				$allowed_types = array(
+					'route ', 'views '
+					);
+				if (!in_array(substr($segment, 0, 6), $allowed_types))
+				{
+					throw new ParseError("Invalid model attribute: {$segment}");
+				}
+
 				// Segments follow the pattern { key "value" }
 				$data = explode(' ', $segment);
 				$key = $data[0];
@@ -153,16 +174,28 @@ class Parser {
 
 					// Fallback condition
 					default:
+						throw new ParseError("Invalid model attribute key: {$key}");
 						break;
 				}
 			}
 		}
+
+		// If you've made it to here and haven't assigned a views or routes file, default to the 'table_name' value
+		if (empty($this->model->routesPath))
+		{
+			$this->model->routesPath = $this->model->tableName;
+		}
+		if (empty($this->model->viewsPath))
+		{
+			$this->model->viewsPath = $this->model->tableName;
+		}
+		
 	}
 
 	public function parseField($line)
 	{
 		// Create new field object
-		$field = new \Primathon\Idea\Parser\ParserField;
+		$field = new ParserField;
 
 		// Tidy up the line, split segments up by semicolons
 		$line = trim($line);
@@ -171,7 +204,7 @@ class Parser {
 		// Determine field name; should be the absolute first thing defined
 		// >> what_exactly text; rules "required|alpha"; label "What exactly are you measuring?"
 		// >> project_id integer hidden; ??
-		$fieldMeta = explode(" ", $segments[0]);
+		$fieldMeta = explode(' ', $segments[0]);
 		$field->name = $fieldMeta[0];
 
 		// timestamps/softDeletes detected; shouldn't be in fields list, but don't break if they are
@@ -192,8 +225,8 @@ class Parser {
 		{
 			// Check for validity of the type field
 			$allowed_types = array(
-				'increments', 'integer', 'bigInteger', 'smallInteger', 'float', 'decimal',
-				'string', 'text', 'date', 'dateTime', 'time', 'timestamp',
+				'increments', 'integer', 'bigInteger', 'smallInteger', 'tinyInteger', 'float', 'double', 'decimal',
+				'string', 'text', 'longText', 'mediumText', 'date', 'dateTime', 'time', 'timestamp',
 				'boolean', 'binary', 'enum',
 				);
 			if (!in_array($fieldMeta[1], $allowed_types))
@@ -204,26 +237,38 @@ class Parser {
 			// Assign field type
 			$field->type = $fieldMeta[1];
 
-			// TODO: fieldMeta may also hold: 
-			// name type size hidden nullable unsigned
-			/*
-			 field types
-				string('email', 100)
-				enum('sizes', array('sm', 'med', 'lg'))
-				double('column', 15, 8)
-				decimal('amount', 6, 2)
+			// This will usually be 'id', but if not, user can override it
+			if ($field->type == 'increments')
+			{
+				if (!empty($this->model->primaryKey))
+				{
+					throw new ParseError("An 'increments' field has already been defined");
+				}
+				else
+				{
+					$this->model->primaryKey = $field->name;
+				}
+			}
 
-			And the following field modifiers are supported:
-				default "value"
-				nullable
-				unsigned
-				primary
-				fulltext
-				unique
-				index
-	
-			type enum "admin", "moderator", "user"
-			type enum admin, moderator, user
+			// Enumerated field type
+			else if ($field->type == 'enum')
+			{
+				// enum processing here
+			}
+
+			// Floating-point precision
+			else if (in_array($field->type, array('double', 'decimal', 'float')))
+			{
+				// params:
+				// double('colname', precision, scale) -- and decimal, float
+			}
+
+			/*
+			 * TODO:
+			 * add field lengths
+			 * add enum types
+			 * add double, decimal, float types
+			 * add handling quotes
 			 */
 
 			// Loop through semicolon-delimited field segments
@@ -234,6 +279,14 @@ class Parser {
 				$key = $fieldData[0];
 				$val = trim(str_replace($key, '', $segment));
 				$val = trim($val, '"');
+
+				/*
+				 * some example data
+				completed_at timestamp; nullable
+				bignumber integer; unsigned;
+				strlen string 90; nullable;
+				usertype enum admin, moderator, user; nullable
+				 */
 
 				// As you move through the segments, what are you looking at?
 				switch ($key) {
@@ -258,6 +311,27 @@ class Parser {
 						$field->label = $val;
 						break;
 
+					// nullable field
+					case 'nullable':
+						if ($field->type == 'increments')
+						{
+							throw new ParseError("Field type '{$field->type}' cannot be nullable");
+						}
+						$field->nullable = true;
+						break;
+
+					// unsigned field
+					case 'unsigned':
+						$allowed_types = array(
+							'integer', 'bigInteger', 'smallInteger', 'tinyInteger',
+							);
+						if (!in_array($field->type, $allowed_types))
+						{
+							throw new ParseError("Field type '{$field->type}' cannot be unsigned");
+						}
+						$field->unsigned = true;
+						break;
+						
 					// fallback condition
 					default:
 						break;
