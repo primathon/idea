@@ -8,12 +8,25 @@
 		<div class="col-sm-10 col-lg-offset-1">
 
 			<h1>{{title}}</h1>
+			{{ link_to_route('{{routesPath}}.create', 'Create a new {{model}}', null, array('class' => 'btn btn-default btn-sm')) }}
 
 			<hr />
 
-			{{content}}
+			<ul class="list-group">
 
-			</div>
+				@foreach (${{models}} as ${{model}})
+					<li class="list-group-item">
+						<a href="#" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-move"></span></a>
+                        {{ Form::open(array('method' => 'delete', 'route' => array('{{routesPath}}.destroy', ${{model}}->{{primaryKey}}), 'style' => 'display:inline')) }}
+                            {{ Form::submit('Delete {{Model}}', array('class' => 'btn btn-default btn-sm')) }}
+                        {{ Form::close() }}
+						{{ link_to_route('{{routesPath}}.edit', 'Edit {{Model}}', array(${{model}}->{{primaryKey}}), array('class' => 'btn btn-default btn-sm')) }}
+						{{ link_to_route('{{routesPath}}.show', 'View {{Model}}', array(${{model}}->{{primaryKey}}), array('class' => 'btn btn-default btn-sm')) }}
+						{{ ${{model}}->title }}
+					</li>
+				@endforeach
+
+			</ul>
 
 		</div>
 	</div>

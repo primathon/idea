@@ -102,6 +102,11 @@ abstract class BaseGenerator {
 			'field.checkbox', 'field.date', 'field.hidden', 'field.select', 'field.text', 'field.text-sm', 'field.textarea',	
 		);
 
+		if (empty($name))
+		{
+			return false;
+		}
+
 		// Check to see if you're loading a valid template
 		if (!in_array($name, $allowed))
 		{
@@ -113,6 +118,77 @@ abstract class BaseGenerator {
 		$template = \File::get($this->templatePath . $name);
 		return $template;
 	}
+
+
+	/**
+	 * Get field template name from field type
+	 *
+	 * @param  string $name
+	 * @return string $template
+	 */
+	protected function getFieldTemplateName($type)
+	{
+		switch ($type) {
+
+			// Hidden auto-increment field
+//				case 'increments':
+//					$fieldTemplateName = 'field.hidden';
+//					break;
+
+			// Numbers and whatnot
+			case 'integer':
+			case 'bigInteger':
+			case 'smallInteger':
+			case 'float':
+			case 'decimal':
+				$fieldTemplateName = 'field.text-sm';
+				break;
+
+			// Standard text entry
+			case 'string':
+				$fieldTemplateName = 'field.text';
+				break;
+
+			// Large textarea entry
+			case 'text':
+				$fieldTemplateName = 'field.textarea';
+				break;
+
+			// Date/time entries
+			case 'date':
+			case 'dateTime':
+			case 'time':
+			case 'timestamp':
+				$fieldTemplateName = 'field.date';
+				break;
+
+			// Checkbox
+			case 'boolean':
+				$fieldTemplateName = 'field.checkbox';
+				break;
+
+			// Select Dropdown
+			case 'enum':
+				$fieldTemplateName = 'field.select';
+				break;
+
+			// IGNORE BINARY
+			case 'binary':
+			case 'increments':
+				$fieldTemplateName = ''; // SKIP
+				break;
+
+			// Fallback
+			default:
+				$fieldTemplateName = 'field.text';
+				break;
+		}
+
+		return $fieldTemplateName;
+
+	}
+
+
 
 }
 

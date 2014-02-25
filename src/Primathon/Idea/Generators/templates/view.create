@@ -2,20 +2,32 @@
 
 @section('main')
 
-<h1>{{title}}</h1>
+<div class="container main-content">
+	<div class="row">
 
-{{ Form::open(array('route' => '{{routePath}}', 'class' => 'form-horizontal', 'role' => 'form')) }}
+		<div class="col-sm-10 col-lg-offset-1">
 
-	{{fields}}
+			<h1>{{title}}</h1>
+			{{ link_to_route('{{routesPath}}.index', 'Show all {{models}}', null, array('class' => 'btn btn-default btn-sm')) }}
 
-	<div class="form-group">
-		<div class="col-sm-offset-2 col-sm-10">
-			{{ Form::submit('Save Entry', array('class' => 'btn btn-info')) }}
+			<hr />
+
+			{{ Form::open(array('route' => '{{routesPath}}.store', 'class' => 'form-horizontal', 'role' => 'form')) }}
+
+				{{fields}}
+
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						{{ Form::submit('Save {{Model}}', array('class' => 'btn btn-info')) }}
+					</div>
+				</div>
+
+			{{ Form::close() }}
+
 		</div>
 	</div>
-
-{{ Form::close() }}
+</div>
 
 @stop
 
-{{-- end {{fileName}} --}}
+{{-- end {{appPath}} --}}

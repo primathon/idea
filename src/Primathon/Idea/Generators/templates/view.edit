@@ -8,12 +8,21 @@
 		<div class="col-sm-10 col-lg-offset-1">
 
 			<h1>{{title}}</h1>
+			{{ link_to_route('{{routesPath}}.index', 'Show all {{models}}', null, array('class' => 'btn btn-default btn-sm')) }}
 
 			<hr />
 
-			{{content}}
+			{{ Form::model(${{model}}, array('route' => array('{{routesPath}}.update', ${{model}}->{{primaryKey}}), 'class' => 'form-horizontal', 'role' => 'form', 'method' => 'patch')) }}
 
-			</div>
+				{{fields}}
+
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+						{{ Form::submit('Update {{Model}}', array('class' => 'btn btn-info')) }}
+					</div>
+				</div>
+
+			{{ Form::close() }}
 
 		</div>
 	</div>
@@ -21,3 +30,4 @@
 
 @stop
 
+{{-- end {{appPath}} --}}

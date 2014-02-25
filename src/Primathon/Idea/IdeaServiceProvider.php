@@ -36,13 +36,15 @@ class IdeaServiceProvider extends ServiceProvider {
 		$this->registerLangGenerator();
 		$this->registerMigrationGenerator();
 		$this->registerModelGenerator();
+		$this->registerViewsGenerator();
 
 		// Register Artisan commands
 		$this->commands(
 			'idea.controller',
 			'idea.lang',
 			'idea.migration',
-			'idea.model'
+			'idea.model',
+			'idea.views'
 		);
 
 	}
@@ -96,6 +98,19 @@ class IdeaServiceProvider extends ServiceProvider {
 		$this->app['idea.migration'] = $this->app->share(function($app) {
 			$generator = new Generators\MigrationGenerator;
 			return new Commands\GenerateMigrationCommand($generator);
+		});
+	}
+	
+	/**
+	 * Register idea:views
+	 *
+	 * @return Commands\GenerateViewsCommand
+	 */
+	protected function registerViewsGenerator()
+	{
+		$this->app['idea.views'] = $this->app->share(function($app) {
+			$generator = new Generators\ViewsGenerator;
+			return new Commands\GenerateViewsCommand($generator);
 		});
 	}
 	

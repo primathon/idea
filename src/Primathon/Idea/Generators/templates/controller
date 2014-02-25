@@ -70,7 +70,7 @@ class {{className}} extends BaseController {
 	{
 		${{model}} = $this->{{model}}->findOrFail(${{primaryKey}});
 		$data = array(
-			'{{models}}' => ${{models}},
+			'{{model}}' => ${{model}},
 		);
 		return View::make('{{viewsPath}}.show', $data);
 	}
@@ -89,7 +89,7 @@ class {{className}} extends BaseController {
 			return Redirect::route('{{routesPath}}.index');
 		}
 		$data = array(
-			'{{models}}' => ${{models}},
+			'{{model}}' => ${{model}},
 		);
 		return View::make('{{viewsPath}}.edit', $data);
 	}
@@ -109,10 +109,10 @@ class {{className}} extends BaseController {
 		{
 			${{model}} = $this->{{model}}->find(${{primaryKey}});
 			${{model}}->update($input);
-			return Redirect::route('{{routesPath}}.show', {{primaryKey}});
+			return Redirect::route('{{routesPath}}.show', ${{primaryKey}});
 		}
 
-		return Redirect::route('{{routesPath}}.edit', {{primaryKey}})
+		return Redirect::route('{{routesPath}}.edit', ${{primaryKey}})
 			->withInput()
 			->withErrors($validation)
 			->with('message', 'There were validation errors.');
